@@ -1,0 +1,45 @@
+The provided text introduces AgentSLA, a specialized framework designed to define Service Level Agreements (SLAs) specifically for AI agents. As software shifts from simple model integrations toward autonomous Agent-as-a-Service paradigms, the authors argue that traditional quality metrics are insufficient for ensuring reliability. To bridge this gap, they propose an expanded quality model based on the ISO/IEC 25010 standard, incorporating new dimensions such as autonomy, sustainability, and output properties. The research includes a domain-specific language (DSL) that uses JSON syntax to allow developers to formalize performance expectations and ethical constraints. Ultimately, this work provides a structured methodology and Python-based tools to automate the monitoring and validation of AI agent behavior within complex software ecosystems.
+
+
+
+How does the AgentSLA DSL manage agent autonomy and interoperability?
+
+The **AgentSLA DSL** manages agent autonomy and interoperability by incorporating them as distinct characteristics within its quality model and providing specific metrics to measure and enforce them through Service Level Agreements (SLAs).
+
+### **Management of Agent Autonomy**
+AgentSLA treats **autonomy** as a critical quality characteristic that affects the interaction between the user and the agent.
+*   **Quality Model Integration:** Autonomy is included under the **Interaction capability** section of the AgentSLA quality model, which extends the ISO/IEC 25010 standard.
+*   **Definition:** It represents the level of human oversight required and the agent's ability to refine answers and perform thought processes independently.
+*   **Measurement:** The DSL utilizes a specific metric called **OversightLevel** to quantify this characteristic, which identifies the degree of human intervention needed for the agent to function.
+
+### **Management of Interoperability**
+Interoperability is addressed because modern AI agents are often complex systems composed of multiple sub-components, such as tools or multi-agent delegations.
+*   **Quality Model Integration:** It is categorized under the **Compatibility** section of the quality model. 
+*   **Standardized Metrics:** AgentSLA defines specific boolean metrics to assess an agent's ability to communicate and connect with other systems:
+    *   **A2A:** Measures if the agent can communicate using the **Agent2Agent Protocol**.
+    *   **MCP:** Measures if the agent can connect to tools via the **Model Context Protocol**.
+*   **Technical Compatibility:** The DSL’s **concrete syntax is based on JSON**. This choice is intentional to ensure the DSL itself is interoperable with existing AI agent protocols, like Google’s A2A, which also use JSON for communication.
+
+By defining these characteristics and their associated metrics, AgentSLA allows developers to set **Service-Level Objectives (SLOs)**—such as requiring an agent to support MCP or maintaining a specific level of autonomy—which can then be automatically monitored and enforced.
+
+
+AgentSLA extends the ISO/IEC 25010 quality standard by adding two entirely new sections and incorporating specialized characteristics and metrics into the existing framework to address the unique nature of AI agents.
+
+### **New Quality Model Sections**
+AgentSLA introduces two new top-level sections to the standard software quality model:
+*   **Sustainability:** This section focuses on the environmental footprint of AI, specifically measuring **training impact**, **inference impact**, and **mitigation** efforts (such as carbon offsets).
+*   **Output Properties:** Because the primary goal of most agents is generating content, this section evaluates extra-functional aspects of the output, including **conciseness**, **consistency**, **creativity**, and **diversity**.
+
+### **Additions to Existing ISO 25010 Sections**
+AgentSLA adds specific characteristics to existing categories to better reflect agentic behavior:
+*   **Autonomy:** Added to the **Interaction capability** section, this represents the level of human oversight required and the agent's independent thought processes.
+*   **Fairness:** Included under **Reliability**, this addresses ethical concerns and potential biases (e.g., racism, sexism, or ageism) in the agent's behavior.
+*   **Understandability:** While building on the existing **accountability** characteristic in the **Security** section, it regroups properties like **transparency**, **explainability**, and **interpretability** to ensure the decision-making process is clear.
+
+### **Extensions of Existing Characteristics**
+AgentSLA also broadens the definitions of several standard characteristics:
+*   **Functional Suitability:** This is extended to cover the **completeness** of model capabilities, the **correctness** (accuracy) of results, and **functional appropriateness** (model relevance to the specific problem).
+*   **Performance Efficiency:** The **Time-behavior** characteristic is extended to include agent-specific metrics like **Time-To-First-Token (TTFT)** and **training time**.
+*   **Reliability and Security:** These sections are extended to encompass the **robustness** of AI models against perturbations or adversarial attacks.
+
+By formalizing these additions as an extension of an established international standard, AgentSLA provides a structured way to define and enforce **Service Level Agreements (SLAs)** that are specifically tailored for the autonomous and non-deterministic nature of AI agents.
