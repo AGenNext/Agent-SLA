@@ -33,10 +33,36 @@ if (await includes("docker-compose.yml", ["read_only: true", "cap_drop:", "no-ne
   fail("compose-runtime-restrictions", "Compose must enforce read-only containers, dropped capabilities, no-new-privileges, and healthchecks.");
 }
 
-if (await includes("apps/api/src/server.ts", ["maxBodyBytes", "requestTimeout", "headersTimeout", "keepAliveTimeout", "x-content-type-options", "SIGTERM"])) {
+if (
+  await includes("apps/api/src/server.ts", [
+    "maxBodyBytes",
+    "requestTimeout",
+    "headersTimeout",
+    "keepAliveTimeout",
+    "x-content-type-options",
+    "SIGTERM",
+    "AGENT_SLA_API_TOKEN",
+    "Rate limit exceeded",
+    "x-request-id",
+    "timingSafeEqual"
+  ])
+) {
   pass("api-request-hardening", "apps/api/src/server.ts");
 } else {
-  fail("api-request-hardening", "API server must enforce body limits, timeouts, security headers, and graceful shutdown.");
+  fail("api-request-hardening", "API server must enforce auth, body limits, timeouts, request IDs, rate limiting, security headers, and graceful shutdown.");
+}
+
+if (
+  await includes("docs/production.md", [
+    "AGENT_SLA_API_TOKEN",
+    "CORS_ALLOW_ORIGIN",
+    "X-Request-Id",
+    "distributed limiter"
+  ])
+) {
+  pass("production-deployment-guidance", "docs/production.md");
+} else {
+  fail("production-deployment-guidance", "Production documentation must define auth, CORS, request tracing, and distributed rate limiting guidance.");
 }
 
 if (await includes(".github/workflows/ci.yml", ["npm audit --audit-level=high", "npm run e2e", "npm run security:evaluate", "docker build"])) {
