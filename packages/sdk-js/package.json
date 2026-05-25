@@ -1,0 +1,15 @@
+{
+  "name": "@agent-sla/sdk-js",
+  "version": "0.1.0",
+  "description": "JavaScript SDK for AgentSLA.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build"
+  },
+  "dependencies": {
+    "@agent-sla/core": "0.1.0"
+  }
+}

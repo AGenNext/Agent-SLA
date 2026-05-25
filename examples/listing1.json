@@ -1,0 +1,58 @@
+{
+  "GuaranteeTerm": [
+    {
+      "Scope": [
+        {
+          "name": "Scope 1",
+          "Agent": "Agent 1"
+        }
+      ],
+      "QualifyingCondition": [],
+      "SLO": [
+        {
+          "name": "SLO 1",
+          "BoolExpression": {
+            "type": "Comparison",
+            "QoSMetric": "AVG TTFT",
+            "operator": "LESS",
+            "value": 1
+          }
+        }
+      ]
+    }
+  ],
+  "DerivedQoSMetric": [
+    {
+      "name": "AVG TTFT",
+      "description": "Average time to first token across the last ten messages.",
+      "metric_type": "TTFT",
+      "unit": "sec",
+      "uncertainty": 0,
+      "window": 10,
+      "window_unit": "MESSAGE",
+      "aggregation": "AVG",
+      "Provider": "Provider 1"
+    }
+  ],
+  "Provider": [
+    {
+      "name": "Provider 1",
+      "confidence": 0.95,
+      "reputation": 50
+    }
+  ],
+  "Agent": [
+    {
+      "name": "Agent 1",
+      "description": "Example agent from the AgentSLA paper.",
+      "url": "agent_url",
+      "ModelCard": "GPT 4o"
+    }
+  ],
+  "ModelCard": [
+    {
+      "name": "GPT 4o",
+      "model_card": "..."
+    }
+  ]
+}
