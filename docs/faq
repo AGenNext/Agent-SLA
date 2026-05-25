@@ -1,0 +1,20 @@
+How does the AgentSLA DSL manage agent autonomy and interoperability?
+
+
+The **AgentSLA DSL** manages agent autonomy and interoperability by incorporating them as distinct characteristics within its quality model and providing specific metrics to measure and enforce them through Service Level Agreements (SLAs).
+
+### **Management of Agent Autonomy**
+AgentSLA treats **autonomy** as a critical quality characteristic that affects the interaction between the user and the agent.
+*   **Quality Model Integration:** Autonomy is included under the **Interaction capability** section of the AgentSLA quality model, which extends the ISO/IEC 25010 standard.
+*   **Definition:** It represents the level of human oversight required and the agent's ability to refine answers and perform thought processes independently.
+*   **Measurement:** The DSL utilizes a specific metric called **OversightLevel** to quantify this characteristic, which identifies the degree of human intervention needed for the agent to function.
+
+### **Management of Interoperability**
+Interoperability is addressed because modern AI agents are often complex systems composed of multiple sub-components, such as tools or multi-agent delegations.
+*   **Quality Model Integration:** It is categorized under the **Compatibility** section of the quality model. 
+*   **Standardized Metrics:** AgentSLA defines specific boolean metrics to assess an agent's ability to communicate and connect with other systems:
+    *   **A2A:** Measures if the agent can communicate using the **Agent2Agent Protocol**.
+    *   **MCP:** Measures if the agent can connect to tools via the **Model Context Protocol**.
+*   **Technical Compatibility:** The DSL’s **concrete syntax is based on JSON**. This choice is intentional to ensure the DSL itself is interoperable with existing AI agent protocols, like Google’s A2A, which also use JSON for communication.
+
+By defining these characteristics and their associated metrics, AgentSLA allows developers to set **Service-Level Objectives (SLOs)**—such as requiring an agent to support MCP or maintaining a specific level of autonomy—which can then be automatically monitored and enforced.
