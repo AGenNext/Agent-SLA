@@ -1,0 +1,28 @@
+image:
+  repository: ghcr.io/agennext/agent-sla-api
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 2
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+env:
+  NODE_ENV: production
+  PORT: "3000"
+  HOST: 0.0.0.0
+  RATE_LIMIT_WINDOW_MS: "60000"
+  RATE_LIMIT_MAX_REQUESTS: "120"
+
+secretEnv:
+  AGENT_SLA_API_TOKEN: change-me
