@@ -4,6 +4,10 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   javascript:
     runs-on: ubuntu-latest
@@ -41,3 +45,45 @@ jobs:
       - uses: actions/checkout@v4
       - run: docker build -t agennext/agent-sla-api:ci .
       - run: docker build -f Dockerfile.mcp -t agennext/agent-sla-mcp:ci .
+      - name: Scan API image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: agennext/agent-sla-api:ci
+          format: sarif
+          output: trivy-api.sarif
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true
+      - name: Scan MCP image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: agennext/agent-sla-mcp:ci
+          format: sarif
+          output: trivy-mcp.sarif
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true
+      - name: Upload API scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-api.sarif
+      - name: Upload MCP scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-mcp.sarif
+
+  sbom:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: spdx-json
+          output-file: agent-sla.spdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: agent-sla-sbom
+          path: agent-sla.spdx.json
