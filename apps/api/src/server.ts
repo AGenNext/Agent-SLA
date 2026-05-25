@@ -1,9 +1,15 @@
-import { createServer, IncomingMessage } from "node:http";
+import { createServer, IncomingMessage, ServerResponse } from "node:http";
+import { randomUUID, timingSafeEqual } from "node:crypto";
 import { handleRequest } from "./handler.js";
 
 const port = Number(process.env.PORT ?? 8080);
 const host = process.env.HOST ?? "127.0.0.1";
 const maxBodyBytes = Number(process.env.MAX_BODY_BYTES ?? 1_048_576);
+const apiToken = process.env.AGENT_SLA_API_TOKEN;
+const corsOrigin = process.env.CORS_ALLOW_ORIGIN;
+const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 60_000);
+const rateLimitMaxRequests = Number(process.env.RATE_LIMIT_MAX_REQUESTS ?? 120);
+const trustedProxyHeader = process.env.TRUSTED_CLIENT_IP_HEADER?.toLowerCase();
 
 const securityHeaders = {
   "content-type": "application/json; charset=utf-8",
@@ -14,6 +20,49 @@ const securityHeaders = {
   "permissions-policy": "geolocation=(), microphone=(), camera=()",
   "cross-origin-resource-policy": "same-origin"
 };
+
+const publicPaths = new Set(["/health", "/ready"]);
+const rateLimitBuckets = new Map<string, { count: number; resetAt: number }>();
+
+function requestHeaders() {
+  return corsOrigin ? { ...securityHeaders, "access-control-allow-origin": corsOrigin, vary: "Origin" } : securityHeaders;
+}
+
+function writeJson(response: ServerResponse, status: number, body: unknown) {
+  response.writeHead(status, requestHeaders());
+  response.end(JSON.stringify(body));
+}
+
+function getClientId(request: IncomingMessage) {
+  if (trustedProxyHeader) {
+    const header = request.headers[trustedProxyHeader];
+    if (typeof header === "string" && header.trim()) return header.split(",")[0].trim();
+  }
+  return request.socket.remoteAddress ?? "unknown";
+}
+
+function rateLimit(request: IncomingMessage) {
+  const now = Date.now();
+  const clientId = getClientId(request);
+  const bucket = rateLimitBuckets.get(clientId);
+  if (!bucket || bucket.resetAt <= now) {
+    rateLimitBuckets.set(clientId, { count: 1, resetAt: now + rateLimitWindowMs });
+    return { limited: false, resetAt: now + rateLimitWindowMs };
+  }
+  bucket.count += 1;
+  return { limited: bucket.count > rateLimitMaxRequests, resetAt: bucket.resetAt };
+}
+
+function authorized(request: IncomingMessage, pathname: string) {
+  if (publicPaths.has(pathname)) return true;
+  if (!apiToken) return process.env.NODE_ENV !== "production";
+  const authorization = request.headers.authorization ?? "";
+  const expected = `Bearer ${apiToken}`;
+  const provided = Array.isArray(authorization) ? authorization[0] : authorization;
+  const providedBuffer = Buffer.from(provided);
+  const expectedBuffer = Buffer.from(expected);
+  return providedBuffer.length === expectedBuffer.length && timingSafeEqual(providedBuffer, expectedBuffer);
+}
 
 function readJson(request: IncomingMessage) {
   return new Promise<unknown>((resolve, reject) => {
@@ -40,24 +89,35 @@ function readJson(request: IncomingMessage) {
 }
 
 export const server = createServer(async (request, response) => {
+  const requestId = randomUUID();
+  response.setHeader("x-request-id", requestId);
   try {
     if (request.method === "OPTIONS") {
       response.writeHead(204, {
-        ...securityHeaders,
+        ...requestHeaders(),
         "access-control-allow-methods": "GET,POST,OPTIONS",
-        "access-control-allow-headers": "content-type"
+        "access-control-allow-headers": "authorization,content-type",
+        "access-control-max-age": "600"
       });
       response.end();
       return;
     }
     const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "localhost"}`);
+    const limit = rateLimit(request);
+    if (limit.limited) {
+      response.setHeader("retry-after", Math.ceil((limit.resetAt - Date.now()) / 1000));
+      writeJson(response, 429, { error: "Rate limit exceeded", requestId });
+      return;
+    }
+    if (!authorized(request, url.pathname)) {
+      writeJson(response, 401, { error: "Unauthorized", requestId });
+      return;
+    }
     const body = request.method === "GET" ? undefined : await readJson(request);
     const result = await handleRequest(request.method ?? "GET", url.pathname, body);
-    response.writeHead(result.status, securityHeaders);
-    response.end(JSON.stringify(result.body));
+    writeJson(response, result.status, result.body);
   } catch (error) {
-    response.writeHead(400, securityHeaders);
-    response.end(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }));
+    writeJson(response, 400, { error: error instanceof Error ? error.message : String(error), requestId });
   }
 });
 
