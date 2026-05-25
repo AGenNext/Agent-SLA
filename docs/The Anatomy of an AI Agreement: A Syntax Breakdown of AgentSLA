@@ -1,0 +1,141 @@
+The Anatomy of an AI Agreement: A Syntax Breakdown of AgentSLA
+
+1. Introduction: From Models to Managed Agents
+
+The software industry is undergoing a fundamental shift from "Model-as-a-Service" (MaaS)—where Large Language Models (LLMs) act as passive responders—to "Agent-as-a-Service" (AaaS). In this new paradigm, AI agents function as autonomous collaborators capable of refining their own processes and making independent decisions.
+
+Because agents are non-deterministic and autonomous, traditional Service Level Agreements (SLAs) designed for static infrastructure are insufficient. To bridge this gap, the AgentSLA domain-specific language (DSL) was developed. It extends the global ISO/IEC 25010 standard for software quality, introducing new characteristics like Sustainability and Understandability to ensure AI behavior remains predictable and ethical.
+
+Feature	Traditional Software SLAs (ISO 25010)	AI Agent SLAs (AgentSLA Extension)
+Primary Focus	Performance, Availability, Security	Autonomy, Fairness, Output Properties
+Quality Dimensions	Uptime, Latency, Throughput	Understandability (Accountability, Transparency), Sustainability
+Nature of Logic	Deterministic (Predictable outputs)	Non-deterministic (Probabilistic outputs)
+Metric Baseline	Static Infrastructure Metrics	Output Properties (Conciseness, Creativity, Consistency)
+
+This structural shift requires a formal syntax to define these expectations, which is where the AgentSLA DSL provides a rigorous framework for enforcement.
+
+2. The Foundation: The Guarantee Term
+
+In AgentSLA, the GuaranteeTerm is the fundamental unit of the agreement. It serves as the "anchor" that binds a specific requirement to a specific entity under specific conditions. Following a "first-principles" architectural approach, every GuaranteeTerm is composed of three mandatory sub-components that "bracket" the AI’s behavior:
+
+* Scope: The identification of the specific agent or model governed by the term.
+* Qualifying Conditions: The "preconditions" (Boolean expressions) that must be met for the term to become active. For example, a latency requirement might only apply if the input prompt is under 500 tokens.
+* Service Level Objectives (SLOs): The core "promises"—the specific thresholds or goals the service provider guarantees to maintain.
+
+Why this matters to a developer: By separating the when (Qualifying Conditions) from the what (SLOs), developers can create highly granular agreements that account for different operational contexts without writing redundant contracts.
+
+3. Defining the Scope: Linking Agents and Model Cards
+
+The Scope class provides the technical identity of the agreement. It establishes a hierarchical link that moves from a high-level agreement to the specific "nutrition label" of the AI model.
+
+Identity Hierarchy: Scope \rightarrow Agent \rightarrow ModelCard
+
+1. Scope: Defines the boundary of the agreement.
+2. Agent: Identifies the autonomous software entity.
+3. ModelCard: References a standardized report detailing the model's training data, intended use, and ethical limitations.
+
+The "Prescriptive" Shift: Linking to a ModelCard allows the SLA to be prescriptive rather than just descriptive. Because the Model Card contains data on ethics and provenance, an AgentSLA-aware system can automatically reject an agent if its training data doesn't meet corporate compliance standards before the agent is even engaged.
+
+4. The Logic of Compliance: Qualifying Conditions & SLOs
+
+AgentSLA uses the BoolExpression class to evaluate compliance. This logic is what allows a monitor to programmatically determine if a guarantee is being met. Logic is constructed using three primary types: And, Or, and Comparison.
+
+The Comparison operator is the most critical. It functions using a "Left-Hand Side vs. Right-Hand Side" (LHS vs. RHS) structure:
+
+* LHS (Metric): The actual data being measured (e.g., Accuracy).
+* Operator: The relationship (e.g., GREATER, LESS, EQUAL).
+* RHS (Value): The numeric threshold defined in the SLO.
+
+Pseudo-Logic Example: IF [QualifyingCondition: InputLanguage EQUAL "English"] THEN [SLO: Accuracy GREATER 0.95]
+
+Why this matters to a developer: This standardized LHS/RHS logic allows for the automatic generation of runtime monitors. You aren't just writing a document; you are generating a set of machine-executable rules.
+
+5. The Vital Signs: QoS Metrics and the AI Factor
+
+AgentSLA extends the ISO/IEC 25010 framework by introducing the QoSMetric class. A defining feature of AI metrics is Uncertainty. Because LLMs are non-deterministic, measurements often have a "wobble." The uncertainty attribute (a float) allows the Comparison logic to account for this margin of error during SLO evaluation.
+
+Metric	ISO Parent Category	Learner's Definition (Standards-Expert View)
+TTFT	Time-behavior	Time-To-First-Token: The latency between a request and the first generated token.
+Bias	Fairness	Measured as the ratio of successful tests passed using the LangBiTe framework.
+Carbon Emissions	Sustainability	The estimated CO2 footprint of the model’s inference impact.
+OversightLevel	Autonomy	The degree of human intervention required, as defined by Cihon et al.
+Conciseness	Output Properties	Evaluation of the generated output size relative to the prompt requirement.
+
+Why this matters to a developer: Standardized metrics like those from LangBiTe allow for apples-to-apples comparisons between different agent providers, moving beyond vague marketing claims to verifiable data.
+
+6. Advanced Tracking: Derived and Drift Metrics
+
+AI performance is rarely a single data point; it is a trend. AgentSLA handles this through two advanced metric subclasses:
+
+* DerivedQoSMetric: Aggregates data over a specific Window (e.g., the last 10 messages) using an Aggregation Function (e.g., AVG, MED, MIN, MAX).
+* QoSDriftMetric: Measures the stability of an agent by evaluating the delta between two windows. It subtracts the average of a previous window (e.g., t-20 to t-10) from the average of the current window (t-10 to t0).
+
+The Speedometer Analogy: A DerivedQoSMetric is your current average speed over the last mile. A QoSDriftMetric is the measurement of your acceleration or deceleration—how much your speed has changed compared to the mile you just finished.
+
+Why this matters to a developer: Drift metrics are early-warning systems. They detect "model decay" or context-window saturation before the AI fails completely.
+
+7. The Blueprint: Reading an AgentSLA JSON Object
+
+To ensure interoperability with protocols like Google's Agent2Agent (A2A), AgentSLA is encoded in JSON. It follows five strict encoding rules:
+
+1. Classes are objects {}.
+2. Attributes are key-value pairs.
+3. Compositions (containment) nest objects within objects.
+4. Multiplicity (>1) uses arrays [].
+5. Simple Associations link external objects (like a Provider) by their name string.
+
+Listing 1: Full AgentSLA JSON Structure
+
+{
+ "GuaranteeTerm": [{
+  "Scope": [{
+   "name": "Scope 1",
+   "Agent": "Agent 1"
+  }],
+  "QualifyingCondition": [],
+  "SLO": [{
+   "name": "SLO 1",
+   "BoolExpression": {
+    "type": "Comparison",
+    "QoSMetric": "AVG TTFT",
+    "operator": "LESS",
+    "value": 1
+   }
+  }]
+ }],
+ "DerivedQoSMetric": [{
+  "name": "AVG TTFT",
+  "description": "description",
+  "metric_type": "TTFT",
+  "unit": "sec",
+  "uncertainty": 0,
+  "window": 10,
+  "window_unit": "MESSAGE",
+  "aggregation": "AVG",
+  "Provider": "Provider 1"
+ }],
+ "Provider": [{
+  "name": "Provider 1",
+  "confidence": 0.95,
+  "reputation": 50
+ }],
+ "Agent": [{
+  "name": "Agent 1",
+  "description": "description text",
+  "url": "agent_url",
+  "ModelCard": "GPT 4o"
+ }],
+ "ModelCard": [{
+  "name": "GPT 4o",
+  "model_card": "..."
+ }]
+}
+
+
+Code Annotations:
+
+1. Lines 2–17 (GuaranteeTerm): Defines "Scope 1" and "SLO 1." It mandates that the metric "AVG TTFT" must be LESS than 1 second.
+2. Lines 18–28 (DerivedQoSMetric): Defines "AVG TTFT" as a 10-message rolling average. It links to Provider 1 via Rule 5 (Association by name).
+3. Lines 29–33 (Provider): Details the source of the measurement, noting a confidence level of 0.95—essential for establishing the reliability of the telemetry.
+4. Lines 34–39 (Agent): Identifies "Agent 1" and provides the URL for communication, linking it to its specific intelligence profile.
+5. Lines 40–43 (ModelCard): The "GPT 4o" model card. By including this here, the agreement becomes a complete, self-contained audit trail for the AI's behavior and provenance.
