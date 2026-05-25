@@ -46,6 +46,23 @@ For internet-facing production deployments:
 The built-in rate limiter is intentionally lightweight and process-local. Use
 an external distributed limiter at the edge for multi-instance deployments.
 
+## Supply Chain Security
+
+CI and release workflows enforce:
+
+- CodeQL static analysis.
+- Trivy container vulnerability scanning.
+- SPDX SBOM generation and artifact upload.
+- npm audit enforcement.
+- Docker image build verification.
+
+Release pipelines should additionally:
+
+- publish signed container images;
+- attach SBOM artifacts to releases;
+- maintain immutable release provenance;
+- pin deployment manifests to immutable image digests.
+
 ## Containers
 
 The API and MCP containers:
@@ -75,6 +92,8 @@ CI verifies:
 - API E2E smoke test through `npm run e2e`.
 - Static security policy evaluation through `npm run security:evaluate`.
 - Docker builds for API and MCP images.
+- Trivy vulnerability scanning.
+- SPDX SBOM generation.
 
 ## Release Enforcement
 
@@ -86,6 +105,8 @@ The release workflow blocks completion unless all gates pass:
 - Rust SDK tests
 - CodeQL JavaScript/TypeScript analysis
 - API and MCP Docker image builds
+- vulnerability scan enforcement
+- SPDX SBOM generation
 - final `enforce-release` aggregation job
 
 Use the `enforce-release` job as the required status check for protected release
