@@ -1,0 +1,79 @@
+name: Release Enforcement
+
+on:
+  push:
+    tags:
+      - "v*"
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  release-verify:
+    name: Release verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm run release:verify
+
+  python:
+    name: Python SDK verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: PYTHONPATH=packages/sdk-python python -m unittest discover packages/sdk-python/tests
+
+  rust:
+    name: Rust SDK verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test --manifest-path packages/sdk-rust/Cargo.toml
+
+  codeql:
+    name: CodeQL security analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+      - uses: github/codeql-action/analyze@v3
+
+  containers:
+    name: Container build gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t agennext/agent-sla-api:release .
+      - run: docker build -f Dockerfile.mcp -t agennext/agent-sla-mcp:release .
+
+  enforce-release:
+    name: Enforce release gates
+    runs-on: ubuntu-latest
+    needs:
+      - release-verify
+      - python
+      - rust
+      - codeql
+      - containers
+    steps:
+      - run: echo "All release gates passed."

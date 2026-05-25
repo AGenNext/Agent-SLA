@@ -64,3 +64,12 @@ docker compose up --build
 ```
 
 The API is available at `http://127.0.0.1:8080`.
+
+## Release Gate
+
+Container builds are enforced in both CI and the release workflow:
+
+```bash
+docker build -t agennext/agent-sla-api:release .
+docker build -f Dockerfile.mcp -t agennext/agent-sla-mcp:release .
+```

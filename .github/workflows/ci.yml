@@ -16,6 +16,8 @@ jobs:
       - run: npm ci
       - run: npm audit --audit-level=high
       - run: npm test
+      - run: npm run e2e
+      - run: npm run security:evaluate
 
   python:
     runs-on: ubuntu-latest

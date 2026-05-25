@@ -13,6 +13,7 @@ This repository owns the SLA product surface:
 - Docker containers for API and MCP runtime entrypoints
 - GitHub Pages landing page with docs and artifact links
 - Production hardening for API request handling, container defaults, and CI gates
+- E2E and security evaluation enforcement on every release
 
 `Agent-Backend` is the database and runtime layer. Agent-SLA integrates with it
 through explicit adapter interfaces instead of owning persistence or runtime
@@ -70,6 +71,12 @@ docker compose up --build
 curl -s http://127.0.0.1:8080/v1/schema
 ```
 
+Release gate:
+
+```bash
+npm run release:verify
+```
+
 GitHub Pages source:
 
 ```text
@@ -111,6 +118,7 @@ let errors = agent_sla::validate_sla(&sla);
 - Landing page: `docs/index.html`
 - Container docs: `docs/container.md`
 - Production hardening: `docs/production.md`
+- Release workflow: `.github/workflows/release.yml`
 - Plan source: AgentSLA JSON DSL, quality model, validating parser, and metric
   rules described in the paper.
 - Runtime boundary: `Agent-Backend` owns DB/runtime integration; current local

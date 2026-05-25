@@ -50,7 +50,24 @@ CI verifies:
 - Python SDK tests.
 - Rust SDK tests.
 - npm audit with `--audit-level=high`.
+- API E2E smoke test through `npm run e2e`.
+- Static security policy evaluation through `npm run security:evaluate`.
 - Docker builds for API and MCP images.
+
+## Release Enforcement
+
+Every release tag or published GitHub release runs `.github/workflows/release.yml`.
+The release workflow blocks completion unless all gates pass:
+
+- `npm run release:verify`
+- Python SDK tests
+- Rust SDK tests
+- CodeQL JavaScript/TypeScript analysis
+- API and MCP Docker image builds
+- final `enforce-release` aggregation job
+
+Use the `enforce-release` job as the required status check for protected release
+branches/tags.
 
 ## Operational Boundary
 
