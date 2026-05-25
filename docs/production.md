@@ -15,6 +15,13 @@ The API server includes:
 - Request body limit through `MAX_BODY_BYTES`, defaulting to 1 MiB.
 - Request, header, and keep-alive timeouts through `REQUEST_TIMEOUT_MS`,
   `HEADERS_TIMEOUT_MS`, and `KEEP_ALIVE_TIMEOUT_MS`.
+- Bearer-token authentication through `AGENT_SLA_API_TOKEN`.
+- Stateless in-memory rate limiting through `RATE_LIMIT_WINDOW_MS` and
+  `RATE_LIMIT_MAX_REQUESTS`.
+- Optional browser access control through `CORS_ALLOW_ORIGIN`.
+- Optional trusted reverse-proxy client attribution through
+  `TRUSTED_CLIENT_IP_HEADER`.
+- Per-request correlation IDs through `X-Request-Id`.
 - Graceful shutdown on `SIGTERM` and `SIGINT`.
 - JSON-only responses with production security headers:
   - `X-Content-Type-Options: nosniff`
@@ -23,6 +30,21 @@ The API server includes:
   - `Permissions-Policy: geolocation=(), microphone=(), camera=()`
   - `Cross-Origin-Resource-Policy: same-origin`
   - `Cache-Control: no-store`
+
+## Production Deployment Requirements
+
+For internet-facing production deployments:
+
+- configure `AGENT_SLA_API_TOKEN`;
+- terminate TLS at a gateway, ingress, or load balancer;
+- use a dedicated API gateway or WAF for global rate limits and IP policy;
+- restrict `CORS_ALLOW_ORIGIN` to explicit trusted origins;
+- avoid exposing mutable registration endpoints publicly unless backed by
+  authenticated persistence through Agent-Backend;
+- centralize logs and propagate `X-Request-Id` across services.
+
+The built-in rate limiter is intentionally lightweight and process-local. Use
+an external distributed limiter at the edge for multi-instance deployments.
 
 ## Containers
 
