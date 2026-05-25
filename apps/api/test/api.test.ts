@@ -19,6 +19,8 @@ test("evaluates SLA through API handler", async () => {
 
 test("covers every documented API endpoint", async () => {
   const checks = [
+    await handleRequest("GET", "/health", undefined),
+    await handleRequest("GET", "/ready", undefined),
     await handleRequest("POST", "/v1/sla/validate", golden),
     await handleRequest("POST", "/v1/sla/parse", golden),
     await handleRequest("POST", "/v1/sla/evaluate", { sla: golden, metrics: { "AVG TTFT": 0.5 } }),
@@ -28,5 +30,5 @@ test("covers every documented API endpoint", async () => {
     await handleRequest("GET", "/v1/metrics", undefined),
     await handleRequest("POST", "/v1/metrics", { name: "AVG TTFT", metric_type: "TTFT", unit: "sec" })
   ];
-  assert.deepEqual(checks.map((check) => check.status), [200, 200, 200, 200, 200, 200, 200, 201]);
+  assert.deepEqual(checks.map((check) => check.status), [200, 200, 200, 200, 200, 200, 200, 200, 200, 201]);
 });

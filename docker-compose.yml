@@ -1,0 +1,36 @@
+services:
+  agent-sla-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: agennext/agent-sla-api:latest
+    environment:
+      PORT: "8080"
+      HOST: "0.0.0.0"
+      NODE_ENV: production
+    ports:
+      - "8080:8080"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  agent-sla-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    image: agennext/agent-sla-mcp:latest
+    stdin_open: true
+    tty: true
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true

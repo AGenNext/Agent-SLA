@@ -7,7 +7,18 @@ export interface ApiResponse {
   body: unknown;
 }
 
+export const serviceInfo = {
+  name: "agent-sla-api",
+  version: "0.1.0"
+};
+
 export async function handleRequest(method: string, pathname: string, body: unknown): Promise<ApiResponse> {
+  if (method === "GET" && pathname === "/health") {
+    return { status: 200, body: { status: "ok", ...serviceInfo } };
+  }
+  if (method === "GET" && pathname === "/ready") {
+    return { status: 200, body: { status: "ready", ...serviceInfo } };
+  }
   if (method === "GET" && pathname === "/v1/quality-model") {
     return { status: 200, body: listQualityModel() };
   }

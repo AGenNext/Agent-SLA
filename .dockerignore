@@ -1,0 +1,11 @@
+.git
+.github
+node_modules
+**/dist
+**/target
+**/__pycache__
+*.pyc
+.DS_Store
+docs
+skills
+2511.02885v1.pdf

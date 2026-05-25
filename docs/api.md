@@ -10,6 +10,8 @@ Agent-Backend.
 - `POST /v1/sla/parse`
 - `POST /v1/sla/evaluate`
 - `POST /v1/sla/explain`
+- `GET /health`
+- `GET /ready`
 - `GET /v1/quality-model`
 - `GET /v1/schema`
 - `GET /v1/metrics`
@@ -23,11 +25,27 @@ npm run build --workspace @agent-sla/api
 node apps/api/dist/src/server.js
 ```
 
+Container:
+
+```bash
+docker build -t agennext/agent-sla-api:latest .
+docker run --rm -p 8080:8080 agennext/agent-sla-api:latest
+```
+
 Default URL:
 
 ```text
 http://127.0.0.1:8080
 ```
+
+Production environment variables:
+
+- `HOST`: bind host. Defaults to `127.0.0.1`; containers set `0.0.0.0`.
+- `PORT`: listen port. Defaults to `8080`.
+- `MAX_BODY_BYTES`: request body limit. Defaults to `1048576`.
+- `REQUEST_TIMEOUT_MS`: request timeout. Defaults to `30000`.
+- `HEADERS_TIMEOUT_MS`: headers timeout. Defaults to `35000`.
+- `KEEP_ALIVE_TIMEOUT_MS`: keep-alive timeout. Defaults to `5000`.
 
 ## Validate
 

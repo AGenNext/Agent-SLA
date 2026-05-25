@@ -10,6 +10,9 @@ This repository owns the SLA product surface:
 - HTTP API facade
 - MCP stdio server
 - Codex skill for drafting and reviewing AgentSLA agreements
+- Docker containers for API and MCP runtime entrypoints
+- GitHub Pages landing page with docs and artifact links
+- Production hardening for API request handling, container defaults, and CI gates
 
 `Agent-Backend` is the database and runtime layer. Agent-SLA integrates with it
 through explicit adapter interfaces instead of owning persistence or runtime
@@ -60,6 +63,19 @@ node apps/api/dist/src/server.js
 curl -s http://127.0.0.1:8080/v1/quality-model
 ```
 
+Container smoke test:
+
+```bash
+docker compose up --build
+curl -s http://127.0.0.1:8080/v1/schema
+```
+
+GitHub Pages source:
+
+```text
+docs/index.html
+```
+
 ## Example Usage
 
 JavaScript:
@@ -92,6 +108,9 @@ let errors = agent_sla::validate_sla(&sla);
 
 - Source paper: `2511.02885v1.pdf`
 - Golden example: `examples/listing1.json`
+- Landing page: `docs/index.html`
+- Container docs: `docs/container.md`
+- Production hardening: `docs/production.md`
 - Plan source: AgentSLA JSON DSL, quality model, validating parser, and metric
   rules described in the paper.
 - Runtime boundary: `Agent-Backend` owns DB/runtime integration; current local

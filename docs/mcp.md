@@ -25,6 +25,13 @@ Run over stdio:
 node apps/mcp-server/dist/src/server.js
 ```
 
+Container:
+
+```bash
+docker build -f Dockerfile.mcp -t agennext/agent-sla-mcp:latest .
+docker run --rm -i agennext/agent-sla-mcp:latest
+```
+
 ## JSON-RPC Shape
 
 List tools:
