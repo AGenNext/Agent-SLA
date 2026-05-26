@@ -1,4 +1,4 @@
-import { evaluateSLA, explainSLA, getAgentSLAJsonSchema, listQualityModel, parseSLA, validateSLA } from "@agent-sla/core";
+import { evaluateSLA, explainSLA, getAgentSLAJsonSchema, listQualityModel, parseSLA, validateSLA } from "@agennext/agent-sla-core";
 
 const registeredMetrics = new Map<string, unknown>();
 

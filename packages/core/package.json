@@ -1,10 +1,19 @@
 {
-  "name": "@agent-sla/core",
+  "name": "@agennext/agent-sla-core",
   "version": "0.1.0",
   "description": "Canonical AgentSLA DSL model, parser, validator, and evaluator.",
   "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AGenNext/Agent-SLA.git",
+    "directory": "packages/core"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && node --test dist/test/*.test.js"

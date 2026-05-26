@@ -1,17 +1,26 @@
 {
-  "name": "@agent-sla/mcp-server",
+  "name": "@agennext/agent-sla-mcp-server",
   "version": "0.1.0",
   "description": "MCP-compatible stdio server for AgentSLA.",
   "type": "module",
   "bin": {
-    "agent-sla-mcp": "dist/server.js"
+    "agent-sla-mcp": "dist/src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AGenNext/Agent-SLA.git",
+    "directory": "apps/mcp-server"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && node --test dist/test/*.test.js"
   },
   "dependencies": {
-    "@agent-sla/core": "0.1.0"
+    "@agennext/agent-sla-core": "0.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2"

@@ -1,15 +1,24 @@
 {
-  "name": "@agent-sla/sdk-js",
+  "name": "@agennext/agent-sla-sdk-js",
   "version": "0.1.0",
   "description": "JavaScript SDK for AgentSLA.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AGenNext/Agent-SLA.git",
+    "directory": "packages/sdk-js"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "npm run build"
   },
   "dependencies": {
-    "@agent-sla/core": "0.1.0"
+    "@agennext/agent-sla-core": "0.1.0"
   }
 }

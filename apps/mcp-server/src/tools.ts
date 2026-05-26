@@ -1,4 +1,4 @@
-import { evaluateSLA, explainSLA, getAgentSLAJsonSchema, listQualityModel, validateSLA } from "@agent-sla/core";
+import { evaluateSLA, explainSLA, getAgentSLAJsonSchema, listQualityModel, validateSLA } from "@agennext/agent-sla-core";
 
 export const tools = [
   "validate_agent_sla",

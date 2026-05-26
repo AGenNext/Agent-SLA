@@ -1,0 +1,22 @@
+{
+  "name": "@agennext/agent-sla-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Next.js static site for Agent-SLA documentation, SEO content, and lead generation.",
+  "type": "module",
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "test": "next build"
+  },
+  "dependencies": {
+    "next": "^16.0.10",
+    "react": "^19.1.2",
+    "react-dom": "^19.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.1.12",
+    "typescript": "^5.9.2"
+  }
+}

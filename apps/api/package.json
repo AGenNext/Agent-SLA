@@ -1,16 +1,25 @@
 {
-  "name": "@agent-sla/api",
+  "name": "@agennext/agent-sla-api",
   "version": "0.1.0",
   "description": "HTTP API facade for AgentSLA.",
   "type": "module",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AGenNext/Agent-SLA.git",
+    "directory": "apps/api"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "test": "npm run build && node --test dist/test/*.test.js"
   },
   "dependencies": {
-    "@agent-sla/core": "0.1.0"
+    "@agennext/agent-sla-core": "0.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2"

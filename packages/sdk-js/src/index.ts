@@ -6,7 +6,7 @@ export {
   listQualityModel,
   parseSLA,
   validateSLA
-} from "@agent-sla/core";
+} from "@agennext/agent-sla-core";
 export type {
   AgentBackendAdapter,
   AgentSLA,
@@ -15,4 +15,4 @@ export type {
   MetricSnapshot,
   ValidationError,
   ValidationResult
-} from "@agent-sla/core";
+} from "@agennext/agent-sla-core";

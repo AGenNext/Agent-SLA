@@ -12,6 +12,7 @@ This repository owns the SLA product surface:
 - Codex skill for drafting and reviewing AgentSLA agreements
 - Docker containers for API and MCP runtime entrypoints
 - GitHub Pages landing page with docs and artifact links
+- Next.js static-export website for blogs, whitepaper, API/MCP references, glossary, FAQ, knowledge graph, and lead generation
 - Production hardening for API request handling, container defaults, and CI gates
 - E2E and security evaluation enforcement on every release
 
@@ -58,8 +59,8 @@ cargo test --manifest-path packages/sdk-rust/Cargo.toml
 Validate the golden paper-inspired SLA:
 
 ```bash
-npm run build --workspace @agent-sla/core
-npm run build --workspace @agent-sla/api
+npm run build --workspace @agennext/agent-sla-core
+npm run build --workspace @agennext/agent-sla-api
 node apps/api/dist/src/server.js
 curl -s http://127.0.0.1:8080/v1/quality-model
 ```
@@ -80,7 +81,7 @@ npm run release:verify
 GitHub Pages source:
 
 ```text
-docs/index.html
+apps/site
 ```
 
 ## Example Usage
@@ -88,7 +89,7 @@ docs/index.html
 JavaScript:
 
 ```js
-import { validateSLA, evaluateSLA } from "@agent-sla/sdk-js";
+import { validateSLA, evaluateSLA } from "@agennext/agent-sla-sdk-js";
 import sla from "./examples/listing1.json" with { type: "json" };
 
 console.log(validateSLA(sla));
@@ -116,6 +117,7 @@ let errors = agent_sla::validate_sla(&sla);
 - Source paper: `2511.02885v1.pdf`
 - Golden example: `examples/listing1.json`
 - Landing page: `docs/index.html`
+- Next.js site: `apps/site`
 - Container docs: `docs/container.md`
 - Production hardening: `docs/production.md`
 - Release workflow: `.github/workflows/release.yml`
@@ -123,3 +125,21 @@ let errors = agent_sla::validate_sla(&sla);
   rules described in the paper.
 - Runtime boundary: `Agent-Backend` owns DB/runtime integration; current local
   evidence is `/Users/apple/Agent-Backend/surreal/schema/0045_slo_incident_alerting_functions.surql`.
+
+## GitHub Packages
+
+Publishable JavaScript packages use the `@agennext` scope and GitHub Packages registry:
+
+- `@agennext/agent-sla-core`
+- `@agennext/agent-sla-sdk-js`
+- `@agennext/agent-sla-api`
+- `@agennext/agent-sla-mcp-server`
+
+Authenticate with a GitHub token that has `write:packages`, then publish from the workspaces:
+
+```bash
+npm publish --workspace packages/core
+npm publish --workspace packages/sdk-js
+npm publish --workspace apps/api
+npm publish --workspace apps/mcp-server
+```

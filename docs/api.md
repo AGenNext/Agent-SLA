@@ -21,7 +21,7 @@ Agent-Backend.
 
 ```bash
 npm install
-npm run build --workspace @agent-sla/api
+npm run build --workspace @agennext/agent-sla-api
 node apps/api/dist/src/server.js
 ```
 

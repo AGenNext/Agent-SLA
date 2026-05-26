@@ -94,6 +94,7 @@ CI verifies:
 - Docker builds for API and MCP images.
 - Trivy vulnerability scanning.
 - SPDX SBOM generation.
+- Next.js static site build for the GitHub Pages surface.
 
 ## Release Enforcement
 

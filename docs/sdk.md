@@ -13,11 +13,11 @@ Agent-SLA provides mirrored SDK surfaces for JavaScript, Python, and Rust.
 
 ```bash
 npm install
-npm run build --workspace @agent-sla/sdk-js
+npm run build --workspace @agennext/agent-sla-sdk-js
 ```
 
 ```js
-import { validateSLA, evaluateSLA, getAgentSLAJsonSchema } from "@agent-sla/sdk-js";
+import { validateSLA, evaluateSLA, getAgentSLAJsonSchema } from "@agennext/agent-sla-sdk-js";
 
 const validation = validateSLA(sla);
 const evaluation = evaluateSLA(sla, { "AVG TTFT": 0.5 });

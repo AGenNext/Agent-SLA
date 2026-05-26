@@ -16,7 +16,7 @@
 
 ```bash
 npm install
-npm run build --workspace @agent-sla/mcp-server
+npm run build --workspace @agennext/agent-sla-mcp-server
 ```
 
 Run over stdio:

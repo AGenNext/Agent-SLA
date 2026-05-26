@@ -20,6 +20,7 @@ jobs:
       - run: npm ci
       - run: npm audit --audit-level=high
       - run: npm test
+      - run: npm run build --workspace @agennext/agent-sla-site
       - run: npm run e2e
       - run: npm run security:evaluate
 
