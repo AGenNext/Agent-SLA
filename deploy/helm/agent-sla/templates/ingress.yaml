@@ -1,3 +1,4 @@
+{{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -5,13 +6,13 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
-  ingressClassName: nginx
+  ingressClassName: {{ .Values.ingress.className }}
   tls:
     - hosts:
-        - agent-sla.example.com
-      secretName: {{ .Release.Name }}-tls
+        - {{ .Values.ingress.host }}
+      secretName: {{ .Values.ingress.tlsSecretName }}
   rules:
-    - host: agent-sla.example.com
+    - host: {{ .Values.ingress.host }}
       http:
         paths:
           - path: /
@@ -20,4 +21,5 @@ spec:
               service:
                 name: {{ .Release.Name }}
                 port:
-                  number: 80
+                  number: {{ .Values.service.port }}
+{{- end }}
