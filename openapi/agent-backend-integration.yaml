@@ -1,0 +1,255 @@
+openapi: 3.1.0
+info:
+  title: Agent-Backend Integration Contract
+  version: 0.1.0
+  description: Contract used by Agent-SLA SDKs and Agent-Backend for stateless validation plus authoritative backend persistence operations.
+servers:
+  - url: https://agent-backend.example.com
+security:
+  - bearerAuth: []
+paths:
+  /v1/sla/validate:
+    post:
+      summary: Validate an SLA document
+      operationId: validateSla
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {}
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+  /v1/sla/evaluate:
+    post:
+      summary: Evaluate an SLA against runtime evidence
+      operationId: evaluateSla
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {}
+      responses:
+        '200':
+          description: Evaluation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationResult'
+  /v1/backend/sla:
+    post:
+      summary: Persist an authoritative SLA object
+      operationId: persistSlaObject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersistSlaCommand'
+      responses:
+        '200':
+          description: Persisted SLA object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersistedSlaObject'
+  /v1/backend/audit-events:
+    post:
+      summary: Append an immutable audit event
+      operationId: appendAuditEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditEvent'
+      responses:
+        '204':
+          description: Event accepted
+  /v1/backend/metrics:
+    post:
+      summary: Register a tenant-scoped metric
+      operationId: registerMetric
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterMetricCommand'
+      responses:
+        '200':
+          description: Registered metric
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisteredMetric'
+  /v1/backend/incidents/events:
+    post:
+      summary: Record an incident lifecycle event
+      operationId: recordIncidentEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IncidentEvent'
+      responses:
+        '204':
+          description: Event accepted
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    ValidationResult:
+      type: object
+      required: [valid]
+      properties:
+        valid:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: object
+            required: [message]
+            properties:
+              path:
+                type: string
+              message:
+                type: string
+              code:
+                type: string
+    EvaluationResult:
+      type: object
+      required: [compliant]
+      properties:
+        compliant:
+          type: boolean
+        score:
+          type: number
+        violations:
+          type: array
+          items:
+            type: object
+            required: [metric, message]
+            properties:
+              metric:
+                type: string
+              expected: {}
+              actual: {}
+              message:
+                type: string
+    PersistSlaCommand:
+      type: object
+      required: [tenantId, projectId, actorId, idempotencyKey, sla]
+      properties:
+        tenantId:
+          type: string
+        projectId:
+          type: string
+        actorId:
+          type: string
+        idempotencyKey:
+          type: string
+        sla: {}
+    PersistedSlaObject:
+      type: object
+      required: [id, tenantId, projectId, version, sla, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        projectId:
+          type: string
+        version:
+          type: integer
+        sla: {}
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AuditEvent:
+      type: object
+      required: [eventId, tenantId, actorId, action, resourceType, timestamp]
+      properties:
+        eventId:
+          type: string
+        tenantId:
+          type: string
+        actorId:
+          type: string
+        action:
+          type: string
+        resourceType:
+          type: string
+        resourceId:
+          type: string
+        requestId:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+          additionalProperties: true
+    RegisterMetricCommand:
+      type: object
+      required: [tenantId, projectId, name, kind]
+      properties:
+        tenantId:
+          type: string
+        projectId:
+          type: string
+        name:
+          type: string
+        kind:
+          type: string
+        unit:
+          type: string
+        definition: {}
+    RegisteredMetric:
+      type: object
+      required: [id, tenantId, projectId, name, kind, createdAt]
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        projectId:
+          type: string
+        name:
+          type: string
+        kind:
+          type: string
+        unit:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    IncidentEvent:
+      type: object
+      required: [eventId, tenantId, incidentId, type, timestamp]
+      properties:
+        eventId:
+          type: string
+        tenantId:
+          type: string
+        incidentId:
+          type: string
+        type:
+          type: string
+          enum: [opened, updated, resolved]
+        timestamp:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+          additionalProperties: true
