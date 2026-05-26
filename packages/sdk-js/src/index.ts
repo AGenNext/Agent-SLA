@@ -16,3 +16,6 @@ export type {
   ValidationError,
   ValidationResult
 } from "@agennext/agent-sla-core";
+
+export * from './backend-adapter.js';
+export * from './agent-backend-client.js';
