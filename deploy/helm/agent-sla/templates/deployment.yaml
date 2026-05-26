@@ -30,11 +30,11 @@ spec:
                 name: {{ .Release.Name }}
           readinessProbe:
             httpGet:
-              path: /ready
+              path: {{ .Values.probes.readinessPath }}
               port: 3000
           livenessProbe:
             httpGet:
-              path: /health
+              path: {{ .Values.probes.livenessPath }}
               port: 3000
           resources:
 {{ toYaml .Values.resources | indent 12 }}
