@@ -1,0 +1,18 @@
+Agent-SLA has been deployed.
+
+Release: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+
+Ingress:
+{{- if .Values.ingress.enabled }}
+  https://{{ .Values.ingress.host }}
+{{- else }}
+  disabled
+{{- end }}
+
+Metrics endpoint:
+  /metrics
+
+Health endpoints:
+  {{ .Values.probes.livenessPath }}
+  {{ .Values.probes.readinessPath }}
