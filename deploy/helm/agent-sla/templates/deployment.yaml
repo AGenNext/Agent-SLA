@@ -23,12 +23,11 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 3000
-          env:
-            - name: AGENT_SLA_API_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Name }}
-                  key: AGENT_SLA_API_TOKEN
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}
+            - secretRef:
+                name: {{ .Release.Name }}
           readinessProbe:
             httpGet:
               path: /ready
