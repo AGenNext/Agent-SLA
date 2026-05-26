@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: agent-sla
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: agent-sla
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AGenNext/Agent-SLA.git
+    targetRevision: main
+    path: deploy/helm/agent-sla
+    helm:
+      releaseName: agent-sla
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: agent-sla
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
