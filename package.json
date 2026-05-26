@@ -17,7 +17,8 @@
     "e2e": "npm run build && node scripts/e2e-smoke.mjs",
     "security:evaluate": "node scripts/security-evaluation.mjs",
     "performance:smoke": "k6 run tests/performance/k6-smoke.js",
-    "release:verify": "npm ci && npm audit --audit-level=high && npm test && npm run e2e && npm run security:evaluate"
+    "conformance:backend-contract": "node tests/conformance/backend-contract.mjs && node tests/conformance/backend-client-contract.mjs",
+    "release:verify": "npm ci && npm audit --audit-level=high && npm test && npm run e2e && npm run security:evaluate && npm run conformance:backend-contract"
   },
   "devDependencies": {
     "typescript": "^5.9.2"
