@@ -9,6 +9,7 @@ const apiToken = process.env.AGENT_SLA_API_TOKEN;
 const corsOrigin = process.env.CORS_ALLOW_ORIGIN;
 const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 60_000);
 const rateLimitMaxRequests = Number(process.env.RATE_LIMIT_MAX_REQUESTS ?? 120);
+const rateLimitMaxBuckets = Number(process.env.RATE_LIMIT_MAX_BUCKETS ?? 10_000);
 const trustedProxyHeader = process.env.TRUSTED_CLIENT_IP_HEADER?.toLowerCase();
 const startedAtEpochMs = Date.now();
 
@@ -38,6 +39,17 @@ const metrics = {
 
 function inc(map: Map<string, number>, key: string, value = 1) {
   map.set(key, (map.get(key) ?? 0) + value);
+}
+
+function cleanupRateLimitBuckets(now: number) {
+  for (const [key, bucket] of rateLimitBuckets.entries()) {
+    if (bucket.resetAt <= now) rateLimitBuckets.delete(key);
+  }
+  while (rateLimitBuckets.size > rateLimitMaxBuckets) {
+    const oldestKey = rateLimitBuckets.keys().next().value;
+    if (!oldestKey) break;
+    rateLimitBuckets.delete(oldestKey);
+  }
 }
 
 function labelValue(value: string) {
@@ -138,6 +150,7 @@ function getTraceparent(request: IncomingMessage) {
 
 function rateLimit(request: IncomingMessage) {
   const now = Date.now();
+  cleanupRateLimitBuckets(now);
   const clientId = getClientId(request);
   const bucket = rateLimitBuckets.get(clientId);
   if (!bucket || bucket.resetAt <= now) {
