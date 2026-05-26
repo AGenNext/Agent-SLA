@@ -9,6 +9,16 @@ service:
   type: ClusterIP
   port: 80
 
+ingress:
+  enabled: true
+  className: nginx
+  host: agent-sla.example.com
+  tlsSecretName: agent-sla-tls
+
+probes:
+  readinessPath: /ready
+  livenessPath: /health
+
 resources:
   requests:
     cpu: 100m
