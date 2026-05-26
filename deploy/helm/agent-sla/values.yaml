@@ -1,3 +1,5 @@
+namespaceOverride: ""
+
 image:
   repository: ghcr.io/agennext/agent-sla-api
   tag: latest
@@ -19,6 +21,18 @@ probes:
   readinessPath: /ready
   livenessPath: /health
 
+serviceMonitor:
+  enabled: false
+  interval: 30s
+  scrapeTimeout: 10s
+  labels: {}
+
+networkPolicy:
+  enabled: true
+  ingressNamespaceSelector: {}
+  egressNamespaceSelector: {}
+  allowDnsEgress: true
+
 resources:
   requests:
     cpu: 100m
@@ -33,6 +47,7 @@ env:
   HOST: 0.0.0.0
   RATE_LIMIT_WINDOW_MS: "60000"
   RATE_LIMIT_MAX_REQUESTS: "120"
+  RATE_LIMIT_MAX_BUCKETS: "10000"
 
 secretEnv:
   AGENT_SLA_API_TOKEN: change-me
