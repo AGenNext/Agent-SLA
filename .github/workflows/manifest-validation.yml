@@ -24,4 +24,4 @@ jobs:
         run: helm template agent-sla deploy/helm/agent-sla > rendered.yaml
 
       - name: Validate Kubernetes manifests
-        run: docker run --rm -v ":/work" -w /work ghcr.io/yannh/kubeconform:latest -strict -summary rendered.yaml
+        run: docker run --rm -v "${{ github.workspace }}:/work" -w /work ghcr.io/yannh/kubeconform:latest -strict -summary rendered.yaml
