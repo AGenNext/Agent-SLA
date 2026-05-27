@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-      - uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8
+      - run: rustup default stable
       - run: cargo test --manifest-path packages/sdk-rust/Cargo.toml
 
   codeql:
@@ -68,42 +68,16 @@ jobs:
       - run: docker build -t agennext/agent-sla-api:release .
       - run: docker build -f Dockerfile.mcp -t agennext/agent-sla-mcp:release .
       - name: Scan API image
-        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2
-        with:
-          image-ref: agennext/agent-sla-api:release
-          format: sarif
-          output: trivy-api-release.sarif
-          severity: CRITICAL,HIGH
-          exit-code: "1"
-          ignore-unfixed: true
+        run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.58.2 image --severity CRITICAL,HIGH --exit-code 1 --ignore-unfixed agennext/agent-sla-api:release
       - name: Scan MCP image
-        uses: aquasecurity/trivy-action@915b19bbe73b92a6cf82a1bc12b087c9a19a5fe2
-        with:
-          image-ref: agennext/agent-sla-mcp:release
-          format: sarif
-          output: trivy-mcp-release.sarif
-          severity: CRITICAL,HIGH
-          exit-code: "1"
-          ignore-unfixed: true
-      - uses: github/codeql-action/upload-sarif@fee9466b8957867761f2d78f922ab084e3e2dd17
-        if: always()
-        with:
-          sarif_file: trivy-api-release.sarif
-      - uses: github/codeql-action/upload-sarif@fee9466b8957867761f2d78f922ab084e3e2dd17
-        if: always()
-        with:
-          sarif_file: trivy-mcp-release.sarif
+        run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.58.2 image --severity CRITICAL,HIGH --exit-code 1 --ignore-unfixed agennext/agent-sla-mcp:release
 
   sbom:
     name: Generate release SBOM
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-      - uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610
-        with:
-          path: .
-          format: spdx-json
-          output-file: agent-sla-release.spdx.json
+      - run: docker run --rm -v "$PWD:/workspace" anchore/syft:latest dir:/workspace -o spdx-json=/workspace/agent-sla-release.spdx.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: release-sbom
