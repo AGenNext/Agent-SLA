@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Install Helm
-        uses: azure/setup-helm@v4
+        uses: azure/setup-helm@bf6a7d304bc2fdb57e0331155b7ebf2c504acf0a
 
       - name: Helm lint
         run: helm lint deploy/helm/agent-sla
@@ -24,6 +24,4 @@ jobs:
         run: helm template agent-sla deploy/helm/agent-sla > rendered.yaml
 
       - name: Validate Kubernetes manifests
-        uses: docker://ghcr.io/yannh/kubeconform:latest
-        with:
-          args: -strict -summary rendered.yaml
+        run: docker run --rm -v ":/work" -w /work ghcr.io/yannh/kubeconform:latest -strict -summary rendered.yaml
