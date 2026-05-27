@@ -1,0 +1,2 @@
+:HL["/Agent-SLA/_next/static/chunks/0lskxi3ixbxd6.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"blog","param":null,"prefetchHints":0,"slots":{"children":{"name":"ai-agent-sla-metrics","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"171GWFaLnGewQr5TkF6lv"}

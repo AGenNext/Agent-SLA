@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://agennext.github.io/Agent-SLA/sitemap.xml
