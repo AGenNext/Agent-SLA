@@ -7,6 +7,8 @@
   "workspaces": [
     "packages/core",
     "packages/sdk-js",
+    "packages/sdk-python",
+    "packages/sdk-rust",
     "apps/api",
     "apps/mcp-server",
     "apps/site"
